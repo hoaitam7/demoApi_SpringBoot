@@ -12,6 +12,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LoginResponseDTO {
 
-    @Builder.Default
-    private String token = "token....";
+    private String token;
 }

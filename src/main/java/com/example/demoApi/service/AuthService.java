@@ -7,4 +7,5 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface AuthService {
 
     LoginResponseDTO login(LoginRequestDTO request);
+    String generateToken(String name);
 }
