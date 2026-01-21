@@ -3,6 +3,7 @@ package com.example.demoApi.service.implement;
 import com.example.demoApi.dto.request.UserRequestDTO;
 import com.example.demoApi.dto.response.UserResponseDTO;
 import com.example.demoApi.entity.User;
+import com.example.demoApi.enums.Role;
 import com.example.demoApi.exception.AppException;
 import com.example.demoApi.exception.ErrorCode;
 import com.example.demoApi.mapper.UserMapper;
@@ -14,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 @Service
 @AllArgsConstructor
@@ -21,7 +23,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-
+    private final PasswordEncoder passwordEncoder;
     @Override
     public List<UserResponseDTO> index() {
 
@@ -38,9 +40,14 @@ public class UserServiceImpl implements UserService {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
         User user = userMapper.toUser(request); //dto -> model
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10); //độ phức tạp : 10
+
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        HashSet<String> roles = new HashSet<>();
+        roles.add(Role.USER.name());
+        user.setRoles(roles);
+
         user =  userRepository.save(user); // save
+
         return userMapper.toUserResponseDTO(user); //dto
     }
     @Override

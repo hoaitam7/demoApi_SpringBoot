@@ -7,14 +7,17 @@ import com.example.demoApi.dto.response.UserResponseDTO;
 import com.example.demoApi.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController // đánh dấu class này là controller
-@RequestMapping("/api/users/") //định nghĩa các url http
+@RequestMapping("/api/users") //định nghĩa các url http
 @AllArgsConstructor //tự động thêm các constructor
 public class UserController {
 
@@ -30,6 +33,12 @@ public class UserController {
     }
     @GetMapping
     public ApiResponse<List<UserResponseDTO>> index(){
+
+            var authen = SecurityContextHolder.getContext().getAuthentication();
+            log.info("username: {}",  authen.getName());
+            authen.getAuthorities().forEach(auth ->
+                    log.info("authorities: {}",  auth.getAuthority())
+                    );
         ApiResponse<List<UserResponseDTO>> response = new ApiResponse<>();
         response.setResult(userService.index());
         response.setCode(200);
